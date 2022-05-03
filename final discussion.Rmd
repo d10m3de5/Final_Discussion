@@ -1,0 +1,90 @@
+---
+title: "NBA ELO Rating"
+output: html_notebook
+---
+
+# Loading and Installing Libraries
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+# Importing Data set NBA_ELO
+
+```{r}
+nba_ELO<-read_csv("nbaallelo.csv")
+nba_ELO
+```
+# Choosing 2 teams from 2014-2015 NBA Finals (Warriors vs Cavaliers)
+```{r}
+# Filtering year 2015
+nba2015<-filter(nba_ELO, year_id==2015)
+nba2015
+
+# Filtering teams to make comparisons
+teams<-filter(nba2015, team_id=="gsw" & opp_id=="cle")
+teams
+```
+# Comparing ELO ratings for both teams and their outcomes based on Game 1-4
+```{r}
+games<-filter(teams, date_game=="6/4/2015" | date_game=="6/7/2015" | date_game=="6/9/2015" | date_game=="6/11/2015" )
+selectingdata<-select(games, fran_id, pts, elo_i, date_game,win_equiv, opp_fran, opp_pts,opp_elo_i )
+selectingdata
+```
+# Histogram of Warriors ELO entering Game 1-4
+```{r}
+ggplot(data=games)+
+  geom_histogram(mapping=aes(x=elo_i, fill=date_game), bins=10)+
+  labs(title="2014-2015 NBA Finals Game 1-4 Results",
+         subtitle="Warriors",
+         x="ELO Entering Game", y="Amount")
+```
+# Histogram of Cavaliers ELO entering Game 1-4
+```{r}
+ggplot(data=games)+
+  geom_histogram(mapping=aes(x=opp_elo_i, fill=date_game), bins=10)+
+  labs(title="2014-2015 NBA Finals Game 1-4 Results",
+         subtitle="Cavaliers",
+         x="ELO Entering Game", y="Amount")
+```
+
+# Scatter plot of Warriors ELO vs Cavaliers ELO entering game 1-4
+```{r}
+ggplot(data=games)+
+  geom_point(mapping=aes(x=opp_elo_i,y= elo_i, color=date_game))+
+  labs(title="2014-2015 NBA Finals Game 1-4 Results",
+         subtitle="Cavaliers vs Warriors",
+         x="ELO Entering Game (cavs)", y="ELO Entering Game (Warriors)")
+```
+
+# Comparing ELO ratings during the regular season games (Cavs vs. Warriors)
+```{r}
+regular<-filter(teams, date_game=="1/9/2015" | date_game=="2/26/2015" )
+regData<-select(regular, fran_id, pts, elo_i, date_game,win_equiv, opp_fran, opp_pts,opp_elo_i )
+regData
+```
+
+# Scatter plot of Regular Season games
+```{r}
+ggplot(data=regular)+
+  geom_point(mapping=aes(x=opp_elo_i,y= elo_i, color=date_game))+
+  labs(title="2014-2015 NBA Regular Season Results",
+         subtitle="Cavaliers vs Warriors",
+         x="ELO Entering Game (cavs)", y="ELO Entering Game (Warriors)")
+```
+# ELO rating based on Game 5-6 of NBA Finals
+
+```{r}
+# filtering data
+lastFinal<-filter(teams, date_game=="6/14/2015" | date_game=="6/16/2015" )
+lastF<-select(lastFinal, fran_id, pts, elo_i, date_game,win_equiv, opp_fran, opp_pts,opp_elo_i )
+lastF
+```
+# Scatter plot of Game 5-6
+```{r}
+ggplot(data=lastFinal)+
+  geom_point(mapping=aes(x=opp_elo_i,y= elo_i, color=date_game))+
+  labs(title="2014-2015 NBA Finals Game 5-6 Results",
+         subtitle="Cavaliers vs Warriors",
+         x="ELO Entering Game (cavs)", y="ELO Entering Game (Warriors)")
+```
